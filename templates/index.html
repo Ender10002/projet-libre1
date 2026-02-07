@@ -1,3 +1,12 @@
 {% extends 'front/base.html' %}
 {% block content %}
+{% for guides in guides %}
+    <article class="bg-secondary">
+        <h2>{{guides.nom}}</h2>
+        <p>{{guides.description}}</p>
+        <img
+        src = {{guides.image}} 
+        alt =>
+    </article>   
+    {% endfor %}
 {% endblock %}
