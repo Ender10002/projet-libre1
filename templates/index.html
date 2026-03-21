@@ -1,12 +1,14 @@
 {% extends 'front/base.html' %}
 {% block content %}
-{% for guides in guides %}
+{% for guide in guides %}
+<section class="grid grid-cols-4 grid-rows-10 gap-20 p-5">
     <article class="bg-secondary">
-        <h2>{{guides.nom}}</h2>
-        <p>{{guides.description}}</p>
-        <img
-        src = {{guides.image}} 
-        alt =>
-    </article>   
+
+        <h2>{{guide.nom}}</h2>
+        <p>{{guide.sujet}}</p>
+        <img src = "" alt ="" >
+        <p>{{guide.description}}</p>
+    </article>
+</section> 
     {% endfor %}
 {% endblock %}
