@@ -26,7 +26,7 @@ def login():
                 session['role'] = user['role']
                 session['user'] = user['pseudo']
             else:
-                return render_template("login.html", erreur = "les mots de passes ne correspondent pas")
+                return render_template("front/login.html", erreur = "les mots de passes ne correspondent pas")
         return render_template('front/login.html', erreur = "les mots de passes ne correspondent pas")
     else:
         return render_template('front/login.html')
