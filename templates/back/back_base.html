@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <script defer src="/static/script.js"></script>
+    <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            main: '#45D9CF',
+            secondary: '#45D985',
+            third: '#D94599'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+    <header class="bg-red-500">
+        <h1></h1> a voir pour le nom
+        <form action="/search" method="get" class="">
+            <input type="text" name="q" placeholder="Recherche" class="">
+            <button type = "submit" class="">🔎</button>
+        </form>
+
+        <nav>
+            <ul>
+                <li><a href="/" class="flex justify-center">accueil</a></li>
+                {% if session['user'] %}
+                <li><a href="/publish" class="active flex justify-end">Publier</a></li>
+                <li><a href="/logout" class="active flex justify-end">Se Déconnecter</a></li>
+                {% else %}
+                <li><a href="/register" class="active flex justify-end">Se connecter</a></li>
+                <li><a href="/signin" class="active flex justify-end">S'inscrire</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    {% block content %}
+
+    {% endblock %}
+    <footer class="bg-red-500" >
+        <h2>© Louis 2025</h2>
+    </footer>
+</body>
+</html>

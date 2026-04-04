@@ -1,0 +1,31 @@
+{% extends "back/back_base.html" %}
+{% block content %}
+<main>
+    <h1>Page admin</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Users</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{users['pseudo']}}</td>
+                <td>
+                    <form action="{% url 'update_role', user_id = user['id'] %}" method = "POST">
+                        <select name="role" onchange="this.form.submit()">
+                            <option value="user" {% if user['role'] == 'user' %}selected{% endif %}>user</option>
+                            <option value="admin" {% if user['role'] == 'admin' %}selected{% endif %}>admin</option>
+                        </select>
+                    </form>
+                </td>
+                <td><a href="">Voir</a></td>
+                <td><a href="{% url 'delete_user', user_id = user['id'] %}">Supprimer</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+{% endblock %}

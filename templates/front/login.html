@@ -1,4 +1,4 @@
-{% extends 'front/base.html' %}
+{% extends 'base.html' %}
 {% block content %}
 {% if erreur %}
 {% endif %}
@@ -11,13 +11,12 @@
         </div>
         <div class="mt-10">
             <label>Mot de passe</label>
-            <p><input name="mot_de_passe" type="text" placeholder="Entrez votre mot de passe"></p>
+            <p><input name="mot_de_passe" type="password" placeholder="Entrez votre mot de passe"></p>
         </div>
         <div class="mt-10 flex justify-center border-solid rounded-lg bg-green-200">
             <button type="submit">Se connecter</button>
         </div>
-    </form>
-    
+    </form>  
 </div>
 
 {% endblock %}
