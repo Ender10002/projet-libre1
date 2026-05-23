@@ -1,14 +1,25 @@
 {% extends 'front/base.html' %}
 {% block content %}
-{% for guide in guides %}
-<section class="grid grid-cols-4 grid-rows-10 gap-20 p-5">
-    <article class="bg-secondary">
-
-        <h2>{{guide.nom}}</h2>
-        <p>{{guide.sujet}}</p>
-        <img src = "" alt ="" >
-        <p>{{guide.description}}</p>
-    </article>
-</section> 
-    {% endfor %}
+        <section class="grid grid-cols-4 grid-rows-10 gap-20 p-5">
+            {for guides in Guide}
+            <article class="bg-secondary">
+                <h2>{{guides.nom}}</h2>
+                <p>{{guides.description}}</p>
+                <img src="{{guides.image}}" alt="{{guides.titre}}">
+                <p>{{guides.tag}}</p>
+                <p>{{guides.auteur}}</p>
+            </article>
+            <div>
+                <span>{{guides.likes}}</span>
+                <a href="{{ url_for('like_guide', guide_id=guides._id) }}"
+                class = "">
+                {% if session.get('util') in guides.liked_by %}
+                    dislike
+                {% else %}
+                    like
+                {% endif %}
+                </a>
+            </div>
+            {% endfor %}
+        </section> 
 {% endblock %}

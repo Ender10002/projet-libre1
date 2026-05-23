@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+{% if erreur %}
+{{erreur}}
+{% endif %}
+<div class="flex justify-center mt-10 mb-10 border-solid rounded-lg">
+    <form method="POST" action = "{{url_for('publish')}}" enctype="multipart/form-data" class="bg-secondary p-6 border-solid rounded-lg">
+        <div>
+            <label>Titre du guide</label>
+            <p><input name="titre" type="text" placeholder="Titre du guide"></p>
+        </div>
+        <div class="mt-10">
+            <label>Contenu du guide</label>
+            <input name="contenu" type="text" placeholder="Contenu du guide">
+        </div>
+        <div>
+                <label>Image du guide</label>
+                <input name="image" type="file" placeholder="Image du guide">
+        </div>
+        <div class="mt-10">
+            <label>choisir un tag</label>
+                {% for tag in tags %}
+                <input name="tag" type="checkbox" value="{{ tag }}">
+                <label for="{{ tag }}" class = ""> {{ tag }} </label>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mt-10 flex justify-center border-solid rounded-lg bg-green-200">
+            <button type="submit">Publier</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

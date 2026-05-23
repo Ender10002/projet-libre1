@@ -29,9 +29,9 @@ def login():
                 return redirect("/")
                 
             else:
-                return render_template("front/login.html", erreur = "les mots de passes ne correspondent pas")
+                return render_template('login.html', erreur = "les mots de passes ne correspondent pas")
         else:
-            return render_template('front/login.html')
+            return render_template('login.html')
 
 @app.route("/signin")
 def signin():
@@ -60,6 +60,36 @@ def signin():
         else:
             return render_template('signin.html', erreur = "les mots de passe ne correspondent pas")
         
+app.route("/publish/add")
+def add_guide():
+    return render_template('publish.html', tags=TAGS)
+
+@app.route("/publish/create", methods=['POST'])
+def create_guide():
+    titre = request.form['nom']
+    description = request.form['description']
+    image = request.files['image']
+    tag = request.form.getlist['tag']
+    auteur = session['user']
+    
+    if image:
+        nom_fichier = secure_filename(image.filename)
+        upload_path = os.path.join(app.static_folder, 'images/user', nom_fichier)
+        image.save(upload_path)
+        image_path = f"/static/images/user/{nom_fichier}"
+
+    else :
+        image_path = ""
+
+    guides  = {
+        "nom": titre,
+        "description": description,
+        "image": image_path,
+        "tag": tag,
+        "auteur": auteur
+    }
+    db['guides'].insert_one(guides)
+    return redirect(url_for('index'))
 ##########ADMIN##########
 
 @app.route('/admin')
@@ -85,5 +115,6 @@ def delete_user(user_id):
     if 'util' in session and session['role'] == 'admin':
         db['users'].delete_one({"_id": ObjectId(user_id)})
     return redirect(url_for('admin'))
+
 
 app.run(host = '0.0.0.0', port=81)
