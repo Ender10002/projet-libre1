@@ -1,7 +1,7 @@
 {% extends 'front/base.html' %}
 {% block content %}
         <section class="grid grid-cols-4 grid-rows-10 gap-20 p-5">
-            {for guides in Guide}
+            {% for guides in Guide %}
             <article class="bg-secondary">
                 <h2>{{guides.nom}}</h2>
                 <p>{{guides.description}}</p>

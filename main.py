@@ -8,8 +8,12 @@ import bcrypt
 load_dotenv()
 app = Flask(__name__)
 
-mongo = os.getenv('MONGO_URI')
-client = MongoClient(mongo)
+uri = "mongodb+srv://Louis:O6eE8Gd2mz0OAzrR@cluster0.0a0qlbo.mongodb.net/?appName=Cluster0"
+
+client = MongoClient(uri)
+
+#mongo = os.getenv('MONGO_URI')
+#client = MongoClient(mongo)
 db =client.get_database("Guide")
 
 @app.route("/")
@@ -23,24 +27,24 @@ def login():
         db_users = db["users"]
         user = db_users.find_one({"pseudo" : request.form['utilisateur']})
         if user:
-            if bcrypt.checkpw(request.form['mot_de_passe'].encode('utf-8'), user["password"]):
+            if bcrypt.checkpw(request.form['mot_de_passe'].encode('utf-8'), user["password"].encode('utf-8')):
                 session['role'] = user['role']
                 session['user'] = user['pseudo']
                 return redirect("/")
                 
             else:
-                return render_template('login.html', erreur = "les mots de passes ne correspondent pas")
-        else:
-            return render_template('login.html')
+                return render_template('front/login.html', erreur = "les mots de passes ne correspondent pas")
+        
+    return render_template('front/login.html')
 
-@app.route("/signin")
-def signin():
+#@app.route("/signin", methods=["GET", "POST"])
+#def signin():
     if request.method == 'POST':
         return render_template('signin.html', erreur = "le nom d'utilisateur existe déjà")
     else:
         if(request.form["mot_de_passe"] == request.form['verif_mot_de_passe']):
             utilisateur = request.form['utilisateur']
-            mdp = request['mot_de_passe']
+            mdp = request.form['mot_de_passe']
             avatar = request.form['avatar']
 
             mdp_crypte = mdp.encode("utf-8")
@@ -65,7 +69,60 @@ def signin():
             return redirect("/")
         else:
             return render_template('signin.html', erreur = "les mots de passe ne correspondent pas")
-        
+@app.route("/signin", methods=["GET", "POST"])
+def signin():
+    if request.method == "GET":
+        return render_template("signin.html")
+
+    # POST request
+    if request.form["mot_de_passe"] != request.form["verif_mot_de_passe"]:
+        return render_template(
+            "signin.html",
+            erreur="Les mots de passe ne correspondent pas"
+        )
+
+    utilisateur = request.form["utilisateur"]
+    mdp = request.form["mot_de_passe"]
+    avatar = request.form["avatar"]
+
+    # Vérifier si l'utilisateur existe déjà
+    if db["users"].find_one({"pseudo": utilisateur}):
+        return render_template(
+            "signin.html",
+            erreur="Le nom d'utilisateur existe déjà"
+        )
+
+    # Vérifications
+    if len(utilisateur) < 3 or len(utilisateur) > 20:
+        return render_template(
+            "signin.html",
+            erreur="Le nom d'utilisateur doit contenir entre 3 et 20 caractères"
+        )
+
+    if len(mdp) < 10:
+        return render_template(
+            "signin.html",
+            erreur="Le mot de passe doit contenir au moins 10 caractères"
+        )
+
+    # Hash du mot de passe
+    mdp_hash = bcrypt.hashpw(
+        mdp.encode("utf-8"),
+        bcrypt.gensalt()
+    )
+
+    new_user = {
+        "pseudo": utilisateur,
+        "password": mdp_hash,
+        "avatar": avatar,
+        "guides": [],
+        "role": "user"
+    }
+
+    db["users"].insert_one(new_user)
+
+    return redirect("/")
+
 app.route("/publish/add")
 def add_guide():
     return render_template('publish.html', tags=TAGS)
