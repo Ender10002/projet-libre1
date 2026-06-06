@@ -47,6 +47,12 @@ def signin():
             salt = bcrypt.gensalt()
             mdp_hash = bcrypt.hashpw(mdp_crypte, salt)
 
+            if len(utilisateur) < 3 or len(utilisateur) > 4:
+                return redirect(url_for('login'))
+            
+            if len(mdp) < 10:
+                return redirect(url_for('login'))
+
             new_user = {
                 "pseudo" : utilisateur,
                 "password" : mdp_hash,
@@ -86,10 +92,46 @@ def create_guide():
         "description": description,
         "image": image_path,
         "tag": tag,
-        "auteur": auteur
+        "auteur": auteur,
+        "likes": 0,
+        "liked_by": []
     }
     db['guides'].insert_one(guides)
     return redirect(url_for('index'))
+
+@app.route("/guide/<guide_id>")
+def like_guide(guide_id):
+    if 'util' in session:
+        return(url_for('login'))
+    
+    user = session['util']
+    guide = db['guides'].find_one({"_id": ObjectId(guide_id)})
+
+    if not guide:
+        return redirect(url_for('index'))
+    
+    if user in guide["liked_by", []]:
+        db['guides'].update_one({"_id" : ObjectId(guide_id)},
+                            {"$inc": {"likes": -1}, 
+                             "$pull": {"liked_by": user}
+                             })
+    else:
+        db['guides'].update_one({"_id" : ObjectId(guide_id)},
+                            {"$inc": {"likes": 1}, 
+                             "$push": {"liked_by": user}
+                             })
+        
+result = db['guides'].update_many({"$or" : [
+    {"tags" : {"$exists": False}},
+    {"likes" : {"$exists": False}},
+    {"liked_by" : {"$exists": False}}
+]},
+    {"$set": {"tags" : [],
+              "likes" : 0,
+              "liked_by" : []
+             }  
+    }
+)
 ##########ADMIN##########
 
 @app.route('/admin')
